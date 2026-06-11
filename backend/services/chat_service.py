@@ -1,5 +1,4 @@
 import sqlite3
-from turtle import title
 
 DB_NAME = "chat_history.db"
 
