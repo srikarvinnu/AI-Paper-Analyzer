@@ -1,0 +1,6 @@
+cd backend 
+venv\Scripts\activate
+py -m uvicorn app:app --reload
+open new terminal
+cd frontend
+npm run dev

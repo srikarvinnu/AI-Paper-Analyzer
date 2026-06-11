@@ -1,0 +1,117 @@
+import chromadb
+
+client = chromadb.PersistentClient(
+    path="chroma_db"
+)
+
+collection = client.get_or_create_collection(
+    name="research_papers"
+)
+
+
+def store_chunks(
+    conversation_id,
+    chunks,
+    embeddings
+):
+
+    ids = []
+
+    metadatas = []
+
+    for i in range(len(chunks)):
+
+        ids.append(
+            f"{conversation_id}_chunk_{i}"
+        )
+
+        metadatas.append(
+            {
+                "conversation_id":
+                str(conversation_id)
+            }
+        )
+        print(
+    "FIRST METADATA =",
+    metadatas[0]
+)
+
+    collection.add(
+        ids=ids,
+        documents=chunks,
+        embeddings=embeddings.tolist(),
+        metadatas=metadatas
+    )
+    print(
+    "COLLECTION COUNT =",
+    collection.count()
+)
+    print(
+    "TOTAL CHUNKS IN COLLECTION =",
+    collection.count()
+)
+    
+
+    return len(ids)
+
+
+def search_chunks(
+    conversation_id,
+    question_embedding,
+    top_k=8
+):
+
+    print(
+        "SEARCHING CONVERSATION:",
+        conversation_id
+    )
+
+    try:
+
+        results = collection.query(
+            query_embeddings=[
+                question_embedding.tolist()
+            ],
+            n_results=top_k,
+            where={
+                "conversation_id":
+                str(conversation_id)
+            }
+        )
+
+        print(
+            "RESULTS =",
+            results
+        )
+
+        if (
+    len(results["documents"]) == 0
+    or
+    len(results["documents"][0]) == 0
+):
+            return []
+
+        return results["documents"][0]
+
+    except Exception as e:
+
+        print(
+            "SEARCH ERROR =",
+            str(e)
+        )
+
+        return []
+def clear_collection():
+
+    global collection
+
+    try:
+        client.delete_collection(
+            name="research_papers"
+        )
+    except:
+        pass
+
+    collection = client.get_or_create_collection(
+        name="research_papers"
+    )
