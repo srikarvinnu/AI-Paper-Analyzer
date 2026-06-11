@@ -22,10 +22,6 @@ from services.pdf_service import (
     extract_metadata
 )
 
-from services.embedding_service import (
-    create_embeddings
-)
-
 from services.rag_service import (
     store_chunks,
 )
@@ -38,7 +34,10 @@ import json
 from dotenv import load_dotenv
 import google.generativeai as genai
 
-from services.embedding_service import model as embedding_model
+from services.embedding_service import (
+    create_embeddings,
+    get_model
+)
 from services.rag_service import search_chunks
 
 # Load environment variables
@@ -281,9 +280,9 @@ async def ask_question(request: ChatRequest):
         question
     )
 
-        question_embedding = embedding_model.encode(
-        question
-    )
+        question_embedding = get_model().encode(
+    question
+)
 
         chunks = search_chunks(
     conversation_id,

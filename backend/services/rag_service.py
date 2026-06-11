@@ -1,12 +1,25 @@
 import chromadb
 
-client = chromadb.PersistentClient(
-    path="chroma_db"
-)
+client = None
+collection = None
 
-collection = client.get_or_create_collection(
-    name="research_papers"
-)
+
+def get_collection():
+
+    global client
+    global collection
+
+    if collection is None:
+
+        client = chromadb.PersistentClient(
+            path="chroma_db"
+        )
+
+        collection = client.get_or_create_collection(
+            name="research_papers"
+        )
+
+    return collection
 
 
 def store_chunks(
@@ -14,6 +27,8 @@ def store_chunks(
     chunks,
     embeddings
 ):
+
+    collection = get_collection()
 
     ids = []
 
@@ -31,10 +46,11 @@ def store_chunks(
                 str(conversation_id)
             }
         )
-        print(
-    "FIRST METADATA =",
-    metadatas[0]
-)
+
+    print(
+        "FIRST METADATA =",
+        metadatas[0]
+    )
 
     collection.add(
         ids=ids,
@@ -42,15 +58,11 @@ def store_chunks(
         embeddings=embeddings.tolist(),
         metadatas=metadatas
     )
+
     print(
-    "COLLECTION COUNT =",
-    collection.count()
-)
-    print(
-    "TOTAL CHUNKS IN COLLECTION =",
-    collection.count()
-)
-    
+        "COLLECTION COUNT =",
+        collection.count()
+    )
 
     return len(ids)
 
@@ -60,6 +72,8 @@ def search_chunks(
     question_embedding,
     top_k=8
 ):
+
+    collection = get_collection()
 
     print(
         "SEARCHING CONVERSATION:",
@@ -85,10 +99,10 @@ def search_chunks(
         )
 
         if (
-    len(results["documents"]) == 0
-    or
-    len(results["documents"][0]) == 0
-):
+            len(results["documents"]) == 0
+            or
+            len(results["documents"][0]) == 0
+        ):
             return []
 
         return results["documents"][0]
@@ -101,14 +115,21 @@ def search_chunks(
         )
 
         return []
+
+
 def clear_collection():
 
     global collection
+    global client
+
+    collection = get_collection()
 
     try:
+
         client.delete_collection(
             name="research_papers"
         )
+
     except:
         pass
 
