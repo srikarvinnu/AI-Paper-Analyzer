@@ -36,7 +36,6 @@ import google.generativeai as genai
 
 from services.embedding_service import (
     create_embeddings,
-    get_model
 )
 from services.rag_service import search_chunks
 
@@ -280,9 +279,9 @@ async def ask_question(request: ChatRequest):
         question
     )
 
-        question_embedding = get_model().encode(
-    question
-)
+        question_embedding = create_embeddings(
+    [question]
+)[0]
 
         chunks = search_chunks(
     conversation_id,

@@ -55,7 +55,7 @@ def store_chunks(
     collection.add(
         ids=ids,
         documents=chunks,
-        embeddings=embeddings.tolist(),
+        embeddings=embeddings,
         metadatas=metadatas
     )
 
@@ -84,8 +84,8 @@ def search_chunks(
 
         results = collection.query(
             query_embeddings=[
-                question_embedding.tolist()
-            ],
+                question_embedding
+],
             n_results=top_k,
             where={
                 "conversation_id":
