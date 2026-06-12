@@ -53,6 +53,9 @@ useRef<HTMLDivElement>(null);
   const [uploadStage, setUploadStage] =
   useState("");
 
+  const [paperInfo, setPaperInfo] =
+  useState<any>(null);
+
   const removePdf = () => {
   setUploadedFile("");
   setPdfUrl("");
@@ -228,6 +231,20 @@ const data =
   );
 
     console.log(data);
+    setPaperInfo(data);
+    if (
+  data?.title &&
+  conversationId
+) {
+
+  await renameConversation(
+    conversationId,
+    data.title
+  );
+
+  await loadConversations();
+
+}
 
     const url =
   URL.createObjectURL(selectedFile);
@@ -1427,6 +1444,47 @@ className="
     pb-52
   "
 >
+  {paperInfo && (
+
+  <div
+    className="
+      w-[80%]
+      max-w-6xl
+      mb-6
+      p-5
+      rounded-2xl
+      bg-white/5
+      border
+      border-white/10
+    "
+  >
+
+    <h3 className="text-xl font-semibold mb-3">
+      📄 Paper Insights
+    </h3>
+
+    <div className="space-y-2 text-gray-300">
+
+      <p>
+        <strong>Title:</strong>{" "}
+        {paperInfo.title}
+      </p>
+
+      <p>
+        <strong>File:</strong>{" "}
+        {paperInfo.filename}
+      </p>
+
+      <p>
+        <strong>Chunks Indexed:</strong>{" "}
+        {paperInfo.chunks_stored}
+      </p>
+
+    </div>
+
+  </div>
+
+)}
           {messages.length === 0 ? (
 
   <>
@@ -1726,12 +1784,14 @@ className="
           </div>
 
           <div
-            className="
-              text-gray-300
-            "
-          >
-            {source}
-          </div>
+  className="
+    text-gray-300
+  "
+>
+  {source.length > 250
+    ? source.slice(0, 250) + "..."
+    : source}
+</div>
 
         </div>
 

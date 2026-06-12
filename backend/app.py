@@ -247,7 +247,9 @@ async def index_pdf(
         return {
     "filename": file.filename,
     "chunks_stored": stored,
-    "title": metadata["title"]
+    "title": metadata.get("title"),
+    "word_count": len(text.split()),
+    "chunks": len(chunks)
 }
     except Exception as e:
 
@@ -265,13 +267,6 @@ async def ask_question(request: ChatRequest):
         messages = get_messages(
         conversation_id
     )
-
-        if len(messages) == 0:
-
-            update_conversation_title(
-            conversation_id,
-            question[:40]
-        )
 
         save_message(
         conversation_id,

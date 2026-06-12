@@ -33,22 +33,26 @@ export async function askQuestion(
 ) {
 
   const response = await fetch(
-    `${API_URL}/ask`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type":
-          "application/json",
-      },
-      body: JSON.stringify({
-        conversation_id:
-          conversationId,
-        question,
-      }),
-    }
-  );
+  `${API_URL}/ask`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      conversation_id: conversationId,
+      question,
+    }),
+  }
+);
 
-  return response.json();
+if (!response.ok) {
+  throw new Error(
+    `HTTP ${response.status}`
+  );
+}
+
+return response.json();
 }
 export async function getConversations(
   email: string
