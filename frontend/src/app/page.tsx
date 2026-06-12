@@ -1575,7 +1575,7 @@ className="
 {message.role === "file" ? (
 
   <a
-    href={`http://localhost:8000/${message.fileUrl}`}
+    href={`https://ai-paper-analyzer-production.up.railway.app/${message.fileUrl}`}
     target="_blank"
     rel="noopener noreferrer"
     className="

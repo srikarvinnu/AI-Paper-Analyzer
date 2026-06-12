@@ -1,4 +1,5 @@
-const API_URL = "http://127.0.0.1:8000";
+const API_URL =
+  "https://ai-paper-analyzer-production.up.railway.app";
 
 export async function uploadPDF(
   file: File,
