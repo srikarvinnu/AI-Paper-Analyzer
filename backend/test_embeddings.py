@@ -1,26 +1,20 @@
-from services.pdf_service import (
-    extract_text_from_pdf,
-    chunk_text
+import os
+from dotenv import load_dotenv
+import google.generativeai as genai
+
+load_dotenv()
+
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+try:
+    result = genai.embed_content(
+    model="models/gemini-embedding-001",
+    content="Hello world"
 )
 
-from services.embedding_service import (
-    create_embeddings
-)
+    print("SUCCESS")
+    print(len(result["embedding"]))
 
-pdf_path = "uploads/1706.03762v7.pdf"
-
-text = extract_text_from_pdf(
-    pdf_path
-)
-
-chunks = chunk_text(text)
-
-embeddings = create_embeddings(
-    chunks
-)
-
-print("Chunks:", len(chunks))
-
-print("Embeddings:", len(embeddings))
-
-print("Vector Length:", len(embeddings[0]))
+except Exception as e:
+    print("ERROR:")
+    print(e)
