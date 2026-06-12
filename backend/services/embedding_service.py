@@ -10,7 +10,7 @@ def create_embeddings(texts):
 
     for text in texts:
         result = genai.embed_content(
-            model="models/embedding-001",
+            model="text-embedding-004",
             content=text
         )
 
