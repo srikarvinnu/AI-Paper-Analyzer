@@ -391,17 +391,6 @@ async def conversation_messages(
 
     result = []
 
-    file_data = get_uploaded_file(
-        conversation_id
-    )
-
-    if file_data:
-
-        result.append({
-            "role": "file",
-            "fileName": file_data[0],
-            "fileUrl": file_data[1]
-        })
 
     for role, content in messages:
 

@@ -310,16 +310,20 @@ if (uploadedFile) {
 
   setMessages((prev) => [
     ...prev,
+
     {
       role: "file",
       fileName: uploadedFile,
       fileUrl: pdfUrl,
     },
+
     {
       role: "user",
       content: currentQuestion,
     },
   ]);
+
+  setPaperInfo(null);
 
   setUploadedFile("");
   setPdfUrl("");
@@ -623,10 +627,6 @@ const handleNewChat = async () => {
 const handleLogoClick = () => {
 
   setMessages([]);
-
-  setUploadedFile("");
-
-  setPdfUrl("");
 
 };
 const togglePinChat = (
@@ -1444,48 +1444,7 @@ className="
     pb-52
   "
 >
-  {paperInfo && (
-
-  <div
-    className="
-      w-[80%]
-      max-w-6xl
-      mb-6
-      p-5
-      rounded-2xl
-      bg-white/5
-      border
-      border-white/10
-    "
-  >
-
-    <h3 className="text-xl font-semibold mb-3">
-      📄 Paper Insights
-    </h3>
-
-    <div className="space-y-2 text-gray-300">
-
-      <p>
-        <strong>Title:</strong>{" "}
-        {paperInfo.title}
-      </p>
-
-      <p>
-        <strong>File:</strong>{" "}
-        {paperInfo.filename}
-      </p>
-
-      <p>
-        <strong>Chunks Indexed:</strong>{" "}
-        {paperInfo.chunks_stored}
-      </p>
-
-    </div>
-
-  </div>
-
-)}
-          {messages.length === 0 ? (
+            {messages.length === 0 ? (
 
   <>
   <h2
@@ -1605,11 +1564,12 @@ className="
   "
 >
 
-    {messages.map(
-      (message, index) => (
+  {messages.map((message, index) => {
 
-        <div
-          key={index}
+    return (
+
+      <div
+        key={index}
           className={`
   mb-6
   p-5
@@ -1804,9 +1764,11 @@ className="
   </div>
 
 )}
-</div>
-      )
-    )}
+      </div>
+
+    );
+
+  })}
 
 {loading && (
 
@@ -1943,7 +1905,9 @@ className="
 
 </div>
 )}
-{messages.length === 0 && (
+{messages.filter(
+  (m) => m.role === "user"
+).length === 0 && (
 
   <div
     className="
@@ -2020,7 +1984,6 @@ className="
 }}
   />
 </>
-
 <textarea
   placeholder="Ask anything about the paper..."
   value={question}
