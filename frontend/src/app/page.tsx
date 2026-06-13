@@ -109,6 +109,9 @@ useState("");
 const [searchTerm, setSearchTerm] =
   useState("");
 
+  const [mobileMenuOpen, setMobileMenuOpen] =
+  useState(false);
+
   const [pinnedChats, setPinnedChats] =
   useState<number[]>([]);
   useEffect(() => {
@@ -617,6 +620,8 @@ const handleNewChat = async () => {
 
     setMessages([]);
 
+    setMobileMenuOpen(false); // ADD THIS
+
   } catch (error) {
 
     console.error(error);
@@ -878,9 +883,57 @@ const exportChatPDF = () => {
     <main className="h-screen bg-[#0f1115] text-white flex overflow-hidden">
 
       {/* Sidebar */}
-      <aside className="w-80 bg-[#0b0d11] border-r border-white/5 flex flex-col">
+      {mobileMenuOpen && (
+  <div
+    onClick={() =>
+      setMobileMenuOpen(false)
+    }
+    className="
+      fixed
+      inset-0
+      bg-black/50
+      z-40
+      md:hidden
+    "
+  />
+)}
+<aside
 
-        <div className="p-5">
+  className={`
+    fixed
+    md:static
+    top-[72px]
+    md:top-0
+    left-0
+    h-[calc(100vh-72px)]
+    md:h-full
+    w-[85vw] md:w-80
+    bg-[#0b0d11]
+    border-r
+    border-white/5
+    flex
+    flex-col
+    z-50
+    transform
+    transition-transform
+    duration-300
+
+    ${
+      mobileMenuOpen
+        ? "translate-x-0"
+        : "-translate-x-full"
+    }
+
+    md:translate-x-0
+  `}
+>
+
+        <div
+  className="
+    p-5
+    md:mt-0
+  "
+>
           <button
           onClick={handleNewChat}
            disabled={!user}
@@ -980,11 +1033,15 @@ font-medium
     (conversation) => (
       <div
   key={conversation.id}
-  onClick={() =>
+  onClick={() => {
+
   loadMessages(
     conversation.id
-  )
-}
+  );
+
+  setMobileMenuOpen(false);
+
+}}
   className={`
   relative
   group
@@ -1112,14 +1169,15 @@ font-medium
 
   }}
   className="
-    opacity-0
-    group-hover:opacity-100
-    transition
-    px-2
-    text-gray-400
-    hover:text-white
-    cursor-pointer
-  "
+  opacity-100
+  md:opacity-0
+  md:group-hover:opacity-100
+  transition
+  px-2
+  text-gray-400
+  hover:text-white
+  cursor-pointer
+"
 >
   ⋮
 </button>
@@ -1350,6 +1408,7 @@ className="
 
 </div>
       </aside>
+      
 
       {/* Main Area */}
       <section className="flex-1 relative overflow-hidden">
@@ -1400,18 +1459,43 @@ className="
 
   <div className="flex items-center justify-between">
 
-  <h1
-    onClick={handleLogoClick}
+<header
+  className="
+    flex
+    items-center
+    gap-4
+    px-4
+    md:px-8
+    py-4
+  "
+>
+
+  {!mobileMenuOpen && (
+  <button
+    onClick={() =>
+      setMobileMenuOpen(true)
+    }
     className="
-      font-semibold
-      text-xl
-      cursor-pointer
-      hover:text-blue-300
-      transition
+      md:hidden
+      text-2xl
+      mr-2
     "
   >
+    ☰
+  </button>
+)}
+
+  <h1
+  className="
+    text-sm
+    md:text-2xl
+    font-bold
+  "
+>
     AI Research Paper Assistant
   </h1>
+
+</header>
 
   <div className="flex items-center gap-4 mb-4">
 
@@ -1449,7 +1533,8 @@ className="
   <>
   <h2
     className="
-      text-6xl
+      text-3xl
+      md:text-6xl
       lg:text-7xl
       font-bold
       tracking-tight
@@ -1556,7 +1641,8 @@ className="
 
   <div
   className="
-    w-[80%]
+    w-[95%]
+    md:w-[80%]
     max-w-6xl
     mx-auto
     pt-8
@@ -1574,7 +1660,7 @@ className="
   mb-6
   p-5
   rounded-2xl
-  text-2xl
+  text-base md:text-2xl
   leading-relaxed
 
   ${
@@ -1584,7 +1670,7 @@ className="
       : message.role === "file"
       ? "ml-auto w-fit"
 
-      : "max-w-full"
+      : "max-w-[90%] mx-auto"
   }
 `}
         >
@@ -1827,9 +1913,9 @@ className="
   className="
     fixed
     bottom-0
-    left-80
+    md:left-80 left-0
     right-0
-    h-48
+    h-auto
     bg-[#0f1115]
     z-40
     flex
@@ -1842,15 +1928,17 @@ className="
 
           <div
             className="
-              w-[80%]
+              w-[95%]
+              md:w-[80%]
+              max-w-6xl
               max-w-6xl
               bg-[#1a1d24]
               relative z-50
               bg-[#1a1d24]
               border
               border-white/10
-              rounded-[40px]
-              p-7
+              rounded-[24px] md:rounded-[40px]
+              p-4 md:p-7
               shadow-xl
             "
           >
@@ -1877,12 +1965,17 @@ className="
   </p>
 
   <p
-  className="
-    text-base
-    text-green-400
-    mt-2
-    font-medium
-  "
+  className={`
+  text-base
+  mt-2
+  font-medium
+  ${
+    uploadStage ===
+    "Ready for questions"
+      ? "text-green-400"
+      : "text-gray-400"
+  }
+`}
 >
   {uploadStage}
 </p>
@@ -2029,7 +2122,8 @@ className="
     bg-transparent
     outline-none
     text-white
-    text-[28px]
+    text-lg
+    md:text-[28px]
     placeholder:text-gray-400
     resize-none
     overflow-y-auto
@@ -2083,7 +2177,9 @@ hover:scale-105
     "
   >
     <FileDown size={20} />
-<span>Export Chat</span>
+<span className="hidden md:inline">
+  Export Chat
+</span>
   </button>
 
 )}
@@ -2117,7 +2213,7 @@ hover:scale-105
         border-white/10
         rounded-2xl
         p-8
-        w-[450px]
+        w-[90vw] md:w-[450px]
       "
     >
 
